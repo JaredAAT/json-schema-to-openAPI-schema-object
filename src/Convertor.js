@@ -7,10 +7,10 @@ class Convertor {
     constructor(schema) {
         this.schema = JSON.parse(JSON.stringify(schema))
 
-        this.specialProperties = ['allOf', 'anyOf', 'items', 'oneOf', 'not', 'properties', 'additionalProperties']
-        this.ofProperties = ['allOf', 'anyOf', 'oneOf']
+        this.specialProperties = ['allOf', 'anyOf', 'items', 'oneOf', 'not', 'properties', 'additionalProperties',]
+        this.ofProperties = ['allOf', 'anyOf', 'oneOf',]
         this.referencedSchemas = {}
-        this.bannedKeyWords = ['$schema', '$comment', '$id', 'version', 'examples', 'id']
+        this.bannedKeyWords = ['$schema', '$comment', '$id', 'version', 'examples', 'id',]
 
         this.components = {
             schemas: {}
