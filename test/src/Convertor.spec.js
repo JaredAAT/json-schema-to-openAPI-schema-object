@@ -24,6 +24,7 @@ const complexTypeArraySchema = require('../schemas/complex-typeArray')
 const complexDefaultValuesSchema = require('../schemas/complex-defaultValues')
 const complexAdditionalPropertiesSchema = require('../schemas/complex-additionalProperties')
 const complexItemsAsArraySchema = require('../schemas/complex-itemsAsArray')
+const complexDeeplyNestedDefinitionRefSchema = require('../schemas/complex-deeplyNestedDefinitionRef')
 
 const simpleOpenAPI = require('../openAPI/simple')
 
@@ -47,6 +48,7 @@ describe('Convertor', () => {
         delete require.cache[require.resolve('../schemas/complex-defaultValues')];
         delete require.cache[require.resolve('../schemas/complex-additionalProperties')];
         delete require.cache[require.resolve('../schemas/complex-itemsAsArray')];
+        delete require.cache[require.resolve('../schemas/complex-deeplyNestedDefinitionRef')];
         convertor = new Convertor(simpleSchema)
     });
 
@@ -471,6 +473,27 @@ describe('Convertor', () => {
             const complexConvertor = new Convertor(complexItemsAsArraySchema)
             const components = complexConvertor.convert()
 
+            const cloned = JSON.parse(JSON.stringify(simpleOpenAPI))
+            let valid = await validator.validateInner(cloned, {})
+            expect(valid).to.be.true
+            Object.assign(cloned, {components})
+            expect(cloned).to.have.property('components')
+            expect(cloned.components).to.have.property('schemas')
+            expect(cloned.components.schemas).to.have.property('main')
+            expect(cloned.components.schemas.main).to.not.have.property('definitions')
+            valid = await validator.validateInner(cloned, {})
+                .catch(err => {
+                    console.log(err)
+                })
+            expect(valid).to.be.true
+        });
+    });
+
+    describe('convert a schema with deeply nested ref definitions', () => {
+        it('should return a schema valid for OpenAPI v3.0.0', async function() {
+            const complexConvertor = new Convertor(complexDeeplyNestedDefinitionRefSchema)
+            const components = complexConvertor.convert()
+            console.dir(components, {depth: null})
             const cloned = JSON.parse(JSON.stringify(simpleOpenAPI))
             let valid = await validator.validateInner(cloned, {})
             expect(valid).to.be.true
