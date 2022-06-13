@@ -1,0 +1,84 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "additionalProperties": false,
+    "definitions": {
+        "nonEmptyString": {
+            "type": "string",
+            "minLength": 1
+        },
+        "compilerOptions": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "optimize": {
+                    "description": "Optimizes the module.",
+                    "type": "boolean"
+                },
+                "optimizeLevel": {
+                    "description": "How much to focus on optimizing code.",
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 3
+                },
+                "shrinkLevel": {
+                    "description": "How much to focus on shrinking code size.",
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 2
+                },
+                "converge": {
+                    "description": "Re-optimizes until no further improvements can be made.",
+                    "type": "boolean"
+                },
+                "baseDir": {
+                    "description": "Specifies the base directory of input and output files.",
+                    "$ref": "#/definitions/nonEmptyString"
+                },
+                "outFile": {
+                    "description": "Specifies the WebAssembly output file (.wasm).",
+                    "$ref": "#/definitions/nonEmptyString"
+                },
+                "textFile": {
+                    "description": "Specifies the WebAssembly text output file (.wat).",
+                    "$ref": "#/definitions/nonEmptyString"
+                },
+                "bindings": {
+                    "description": "Specified the bindings to generate.",
+                    "definitions": {
+                        "bindings": {
+                            "enum": [
+                                "esm",
+                                "raw"
+                            ]
+                        }
+                    },
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/compilerOptions/properties/bindings/definitions/bindings"
+                        },
+                        {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "$ref": "#/definitions/compilerOptions/properties/bindings/definitions/bindings"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "properties": {
+        "options": {
+            "$ref": "#/definitions/compilerOptions"
+        },
+        "targets": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/compilerOptions"
+            }
+        }
+    },
+    "title": "JSON schema for asconfig.json",
+    "type": "object"
+}
